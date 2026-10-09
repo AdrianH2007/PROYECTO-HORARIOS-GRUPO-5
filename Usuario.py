@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 class Usuario(ABC):
     estado = "Activo"
-    def __init__(self, nombreUsuario, contrasena):
-        self.nombreUsuario = nombreUsuario
+    def __init__(self, usuario, contrasena):
+        self.usuario = usuario
         self.contrasena = contrasena
 
     @abstractmethod
