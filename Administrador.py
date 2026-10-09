@@ -10,11 +10,16 @@ class GestorUsuario():
     @staticmethod
     def cargarInstancias():
         cuentas = GestorUsuario.cargarCuentasJson()
+        GestorUsuario.usuario_admin.clear()
+        GestorUsuario.usuario_coord.clear()
         if cuentas["administrador"]:
-            GestorUsuario.usuario_admin.clear()
-            GestorUsuario.usuario_coord.clear()
             for id_str, datos in cuentas.get("administrador", {}).items():
                 GestorUsuario.usuario_admin[int(id_str)] = Administrador(datos["usuario"], datos["contrasena"])
+                GestorUsuario.usuario_admin[int(id_str)].estado = datos["estado"]
+#        if cuentas["coordinador"]:
+#            for id_str, datos in cuentas.get("coordinador", {}).items():
+#                GestorUsuario.usuario_admin[int(id_str)] = Coordinador(datos["usuario"], datos["contrasena"])
+#                GestorUsuario.usuario_admin[int(id_str)].estado = datos["estado"]
 
     @staticmethod
     def cargarCuentasJson():
@@ -83,6 +88,7 @@ class Administrador(Usuario.Usuario):
                 cuentas[opcion][id_str] = {}
             cuentas[opcion][id_str]["usuario"] = nombreU
             cuentas[opcion][id_str]["contrasena"] = passwordU
+            cuentas[opcion][id_str]["estado"] = "Activo"
             GestorUsuario.guardarCuentasJson(cuentas)
             print("Se ha guardado la cuenta correctamente")
         else:
@@ -104,11 +110,14 @@ class Administrador(Usuario.Usuario):
                     print("Ingrese la nueva contraseña para el usuario")
                     op = "contrasena"
                 case 3:
+                    id_str = str(id)
                     if opcion == 1:
                         GestorUsuario.usuario_admin[id].estado = "Inactivo"
                     else:
                         GestorUsuario.usuario_coord[id].estado = "Inactivo"
                     print("Se desactivado el usuario")
+                    cuentas[opcion][id_str]["estado"] = "Inactivo"
+                    GestorUsuario.guardarCuentasJson(cuentas)
                     return
                 case _:
                     print("No se ingreso una respuesta esperada")
