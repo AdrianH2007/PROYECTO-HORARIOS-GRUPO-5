@@ -1,0 +1,149 @@
+{
+    "coord_software": {
+        "horarios": {
+            "Lunes": [
+                {
+                    "id": "1",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Estructuras de Datos",
+                    "docente": "Ing. Carlos Mendoza",
+                    "aula": "Lab 1",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "07:00",
+                    "horaFin": "09:00",
+                    "estado": "generado"
+                },
+                {
+                    "id": "2",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Base de Datos I",
+                    "docente": "Dra. Ana López",
+                    "aula": "Lab 2",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "09:00",
+                    "horaFin": "11:00",
+                    "estado": "generado"
+                },
+                {
+                    "id": "3",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Matemática Discreta",
+                    "docente": "Lic. Roberto Gómez",
+                    "aula": "Aula 101",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "11:00",
+                    "horaFin": "13:00",
+                    "estado": "generado"
+                }
+            ],
+            "Martes": [
+                {
+                    "id": "4",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Programación Orientada a Objetos",
+                    "docente": "Ing. José Pérez",
+                    "aula": "Lab 3",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "07:00",
+                    "horaFin": "10:00",
+                    "estado": "generado"
+                },
+                {
+                    "id": "5",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Arquitectura de Computadores",
+                    "docente": "Ing. Marco Vera",
+                    "aula": "Aula 202",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "10:00",
+                    "horaFin": "12:00",
+                    "estado": "generado"
+                }
+            ],
+            "Miércoles": [
+                {
+                    "id": "6",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Estructuras de Datos",
+                    "docente": "Ing. Carlos Mendoza",
+                    "aula": "Lab 1",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "07:00",
+                    "horaFin": "09:00",
+                    "estado": "generado"
+                },
+                {
+                    "id": "7",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Base de Datos I",
+                    "docente": "Dra. Ana López",
+                    "aula": "Lab 2",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "09:00",
+                    "horaFin": "11:00",
+                    "estado": "generado"
+                }
+            ],
+            "Jueves": [
+                {
+                    "id": "8",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Redes de Computadoras",
+                    "docente": "Ing. Marco Vera",
+                    "aula": "Lab 3",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "08:00",
+                    "horaFin": "10:00",
+                    "estado": "generado"
+                },
+                {
+                    "id": "9",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Ingeniería de Software I",
+                    "docente": "Dra. María Zambrano",
+                    "aula": "Aula 102",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "10:00",
+                    "horaFin": "12:00",
+                    "estado": "generado"
+                }
+            ],
+            "Viernes": [
+                {
+                    "id": "10",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Programación Orientada a Objetos",
+                    "docente": "Ing. José Pérez",
+                    "aula": "Lab 3",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "07:00",
+                    "horaFin": "10:00",
+                    "estado": "generado"
+                },
+                {
+                    "id": "11",
+                    "carrera": "Ingeniería en Software",
+                    "asignatura": "Metodología de la Investigación",
+                    "docente": "Dra. Carmen Cedeño",
+                    "aula": "Aula 104",
+                    "semestre": "Tercero",
+                    "paralelo": "A",
+                    "horaInicio": "10:00",
+                    "horaFin": "12:00",
+                    "estado": "generado"
+                }
+            ]
+        },
+        "eliminados": []
+    }
+}
