@@ -1,0 +1,98 @@
+[
+    {
+        "Nombre": "Matemáticas Discretas",
+        "Cantidad de Horas": 80,
+        "Cantidad de dias": 2,
+        "Dias que se imparte": [
+            "Martes",
+            "Jueves"
+        ]
+    },
+    {
+        "Nombre": "Catedra Alfaro",
+        "Cantidad de Horas": 50,
+        "Cantidad de dias": 1,
+        "Dias que se imparte": [
+            "Viernes"
+        ],
+        "Cantidad de paralelos": 6,
+        "Paralelos": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F"
+        ]
+    },
+    {
+        "Nombre": "Redes de Computadoras",
+        "Cantidad de Horas": 75,
+        "Cantidad de dias": 2,
+        "Dias que se imparte": [
+            "Lunes",
+            "Martes"
+        ],
+        "Cantidad de paralelos": 2,
+        "Paralelos": [
+            "A",
+            "B"
+        ]
+    },
+    {
+        "Nombre": "Modelado orientado a objetos",
+        "Cantidad de Horas": 68,
+        "Cantidad de dias": 2,
+        "Dias que se imparte": [
+            "Martes",
+            "Viernes"
+        ],
+        "Cantidad de paralelos": 2,
+        "Paralelos": [
+            "A",
+            "B"
+        ]
+    },
+    {
+        "Nombre": "Base de datos",
+        "Cantidad de Horas": 63,
+        "Cantidad de dias": 2,
+        "Dias que se imparte": [
+            "Jueves",
+            "Viernes"
+        ],
+        "Cantidad de paralelos": 2,
+        "Paralelos": [
+            "A",
+            "B"
+        ]
+    },
+    {
+        "Nombre": "Sistemas Operativos",
+        "Cantidad de Horas": 70,
+        "Cantidad de dias": 2,
+        "Dias que se imparte": [
+            "Miercoles",
+            "Jueves"
+        ],
+        "Cantidad de paralelos": 2,
+        "Paralelos": [
+            "A",
+            "B"
+        ]
+    },
+    {
+        "Nombre": "Estructura de Datos",
+        "Cantidad de Horas": 75,
+        "Cantidad de dias": 2,
+        "Dias que se imparte": [
+            "Miercoles",
+            "Jueves"
+        ],
+        "Cantidad de paralelos": 2,
+        "Paralelos": [
+            "A",
+            "B"
+        ]
+    }
+]
