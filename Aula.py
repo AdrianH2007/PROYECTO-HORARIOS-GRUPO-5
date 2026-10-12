@@ -15,33 +15,6 @@ class Aula:
         return mesas, sillas
 
     @staticmethod
-    def registrarAula():
-        from AulaPractica import AulaPractica
-        opcion = int (input("Ingrese 1 si quiere crear un aula o 2 si quiere crear un laboratorio"))
-        nombre = input("Ingrese el nombre del aula: ")
-        f = open("aulas.json", "r")
-        aulas = json.load(f)
-        f.close()
-        if nombre in aulas:
-            print("Ya existe un aula con ese nombre")
-            return
-        mesas, sillas = Aula.ingresarCapacidad()
-        aulas[nombre] = {}
-        if opcion == 1:
-            aula = Aula(nombre, mesas, sillas)
-            aulas[nombre]["tipo"]= "Aula"
-        else:
-            equipos = int(input("Ingrese la cantidad de equipos: "))
-            aula = AulaPractica(nombre, mesas, sillas, equipos)
-            aulas[nombre]["mesas"] = aula.cantidadMesas
-            aulas[nombre]["sillas"] = aula.cantidadSillas
-            aulas[nombre]["Estado"] = aula.estado
-            f = open("aulas.json", "w")
-            json.dump(aulas, f, indent=4)
-            f.close()
-            print("Se ha guardado el aula correctamente")
-
-    @staticmethod
     def consultarAula():
         nombre = input("Ingrese el nombre del aula:")
         f = open("aulas,json", "r")
@@ -92,7 +65,7 @@ class Aula:
         opcion = int(input())
         match opcion:
             case 1:
-                aulas[nombre]["mesas"] = int(input("Ingrese la nueva cantidad de meses: "))
+                aulas[nombre]["mesas"] = int(input("Ingrese la nueva cantidad de mesas: "))
             case 2:
                 aulas[nombre]["sillas"] = int(input("Ingrese la nueva cantidad de sillas: "))
             case 3:
