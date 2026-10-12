@@ -182,3 +182,47 @@ class GestorHorario():
                     print(f"Conflicto el día {dia}: El grupo (Carrera, Semestre, Paralelo) ya tiene otra clase asignada a esa hora.")
                     return True
         return False
+
+class GestorAula:
+
+    aulas_teoricas = {}
+    aulas_practicas = {}
+
+    def cargarInstancias():
+        from Aula import Aula
+        from AulaPractica import AulaPractica
+        aulas = GestorAula.cargarAulaJson()
+        #   limpia los diccionarios por si acaso
+        GestorAula.aulas_teoricas.clear()
+        GestorAula.aulas_practicas.clear()
+        #   va cargando las instancia de administrador creadas desde los json
+        for id_str, datos in aulas.get("teorica", {}).items():
+            GestorAula.aulas_teoricas[int(id_str)] = Aula(datos["nombre"], datos["mesas"], datos["sillas"])
+        #   va cargando las instancias de coordinador creadas desde los json
+        for id_str, datos in aulas.get("practica", {}).items():
+            GestorAula.aulas_practicas[int(id_str)] = AulaPractica(datos["nombre"], datos["mesas"], datos["sillas"], datos["equipos"])
+
+    def guardarAulaJson(asignaturas):
+        with open("aulas.jsom","w") as f:
+            json.dump(asignaturas, f, indent = 4)
+
+    def cargarAulaJson():
+        with open("aulas.json", "r") as f:
+            return json.load(f)
+
+    def asignarID(dato, comparador):
+        aulas = GestorAula.cargarAulaJson()
+        id_max=0
+        aulasT = aulas.get("teorica", {})
+        for aula in aulasT:
+            if int(aula) > id_max:
+                id_max = int(aula)
+            if aulasT[aula][comparador] == dato:
+                return False, None
+        aulasP = aulas.get("practica",{})
+        for aula in aulasP:
+            if int(aula) > id_max:
+                id_max = int(aula)
+            if aulasP[aula][comparador] == dato:
+                return False, None
+        return True, id_max+1

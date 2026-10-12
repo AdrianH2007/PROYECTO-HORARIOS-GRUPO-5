@@ -1,4 +1,4 @@
-from Persistencia import GestorHorario
+from Persistencia import GestorHorario, GestorAula
 import Usuario
 
 class CoordinadorAcademico(Usuario.Usuario):
@@ -197,3 +197,34 @@ class CoordinadorAcademico(Usuario.Usuario):
             return {}
 
         return self.gestor.horarios.copy()
+
+def registrarAula():
+        from Aula import Aula
+        from AulaPractica import AulaPractica
+        equipos = 0
+        opcion = int (input("Ingrese 1 si quiere crear un aula o 2 si quiere crear un laboratorio"))
+        nombre = input("Ingrese el nombre del aula: ")
+        aulas = GestorAula.cargarAulaJson()
+        validacion, id = GestorAula.asignarID(nombre, "nombre")
+        if not validacion:
+            print("El aula ya existe en el sistema")
+            return
+        mesas, sillas = Aula.ingresarCapacidad()
+        str_id = str(id)
+        if opcion == 1:
+            opcion = "teorica"
+            GestorAula.aulas_teoricas[id] = Aula(nombre, mesas, sillas)
+        else:
+            opcion = "practica"
+            equipos = int(input("Ingrese la cantidad de equipos: "))
+            GestorAula.aulas_teoricas[id] = AulaPractica(nombre, mesas, sillas, equipos)
+        if str_id not in aulas:
+            aulas[opcion][str_id] = {}
+        aulas[opcion][str_id]["nombre"] = nombre
+        aulas[opcion][str_id]["mesas"] = mesas
+        aulas[opcion][str_id]["sillas"] = sillas
+        aulas[opcion][str_id]["estado"] = "Valida"
+        if opcion == "practica":
+            aulas[opcion][str_id]["equipos"] = equipos
+        GestorAula.guardarAulaJson(aulas)
+        print("Se ha guardado el aula correctamente")
