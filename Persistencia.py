@@ -7,8 +7,8 @@ class GestorUsuario():
 
     @staticmethod
     def cargarInstancias():
-        from Administrador import Administrador 
-        from coordinador import CoordinadorAcademico
+        from Clases.Administrador import Administrador 
+        from Clases.coordinador import CoordinadorAcademico
         cuentas = GestorUsuario.cargarCuentasJson()
         #   limpia los diccionarios por si acaso
         GestorUsuario.usuario_admin.clear()
@@ -189,8 +189,8 @@ class GestorAula:
     aulas_practicas = {}
 
     def cargarInstancias():
-        from Aula import Aula
-        from AulaPractica import AulaPractica
+        from Clases.Aula import Aula
+        from Clases.AulaPractica import AulaPractica
         aulas = GestorAula.cargarAulaJson()
         #   limpia los diccionarios por si acaso
         GestorAula.aulas_teoricas.clear()
