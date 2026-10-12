@@ -94,5 +94,19 @@
             "A",
             "B"
         ]
+    },
+    {
+        "Nombre": "Programación Orientada a Objetos",
+        "Cantidad de Horas": 65,
+        "Cantidad de dias": 2,
+        "Dias que se imparte": [
+            "Lunes",
+            "Miercoles"
+        ],
+        "Cantidad de paralelos": 2,
+        "Paralelos": [
+            "A",
+            "B"
+        ]
     }
 ]
