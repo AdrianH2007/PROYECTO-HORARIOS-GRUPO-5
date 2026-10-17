@@ -1,4 +1,5 @@
 import json
+import os
 
 class GestorUsuario():
 
@@ -226,3 +227,66 @@ class GestorAula:
             if aulasP[aula][comparador] == dato:
                 return False, None
         return True, id_max+1
+
+class GestorEstructuraAcademica:
+
+    RUTA_DATOS = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "Datos"
+    )
+
+    RUTA_ARCHIVO = os.path.join(
+        RUTA_DATOS,
+        "estructuraAcademica.json"
+    )
+
+    @staticmethod
+    def cargarDatos():
+        try:
+            with open(
+                GestorEstructuraAcademica.RUTA_ARCHIVO,
+                "r",
+                encoding="utf-8"
+            ) as archivo:
+                datos = json.load(archivo)
+
+            if isinstance(datos, list):
+                return datos
+
+            print("La estructura del archivo académico no es válida.")
+            return []
+
+        except FileNotFoundError:
+            return []
+
+        except json.JSONDecodeError:
+            print("El archivo académico contiene JSON inválido.")
+            return []
+
+    @staticmethod
+    def guardarDatos(datos):
+        if not os.path.isdir(
+            GestorEstructuraAcademica.RUTA_DATOS
+        ):
+            print("No existe la carpeta Datos.")
+            return False
+
+        try:
+            with open(
+                GestorEstructuraAcademica.RUTA_ARCHIVO,
+                "w",
+                encoding="utf-8"
+            ) as archivo:
+                json.dump(
+                    datos,
+                    archivo,
+                    indent=4,
+                    ensure_ascii=False
+                )
+
+            print("Datos académicos guardados correctamente.")
+            return True
+
+        except OSError as error:
+            print(f"Error al guardar los datos: {error}")
+            return False
