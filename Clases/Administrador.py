@@ -1,6 +1,6 @@
 from Persistencia import GestorUsuario
-import Usuario
-from coordinador import CoordinadorAcademico
+from Clases import Usuario
+from Clases.coordinador import CoordinadorAcademico
 
 class Administrador(Usuario.Usuario):
 
