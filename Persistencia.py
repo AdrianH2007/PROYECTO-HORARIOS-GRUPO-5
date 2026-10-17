@@ -79,6 +79,8 @@ class GestorUsuario():
 class GestorHorario():
 
     DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
+    RUTA_DATOS = os.path.join(os.path.dirname(os.path.abspath(__file__)),"Datos")
+    RUTA_ARCHIVO = os.path.join(RUTA_DATOS, "horarios.json")
 
     def __init__(self, usuario):
         self.usuario = usuario
@@ -95,7 +97,7 @@ class GestorHorario():
 
     def cargarHorarios(self):
         try:
-            with open("horarios.json", "r", encoding="utf-8") as archivo:
+            with open(self.RUTA_ARCHIVO, "r", encoding="utf-8") as archivo:
                 datos = json.load(archivo)
 
             usuario_datos = datos.get(self.usuario, {})
@@ -124,7 +126,7 @@ class GestorHorario():
 
     def guardarHorarios(self):
         try:
-            with open("horarios.json", "r", encoding="utf-8") as archivo:
+            with open(self.RUTA_ARCHIVO, "r", encoding="utf-8") as archivo:
                 datos = json.load(archivo)
         except FileNotFoundError:
             datos = {}
@@ -134,7 +136,7 @@ class GestorHorario():
             "eliminados": self.horariosEliminados
         }
 
-        with open("horarios.json", "w", encoding="utf-8") as archivo:
+        with open(self.RUTA_ARCHIVO, "w", encoding="utf-8") as archivo:
             json.dump(datos, archivo, indent=4, ensure_ascii=False)
 
         print("Horarios guardados correctamente.")
@@ -185,48 +187,133 @@ class GestorHorario():
         return False
 
 class GestorAula:
-
     aulas_teoricas = {}
     aulas_practicas = {}
 
+    RUTA_DATOS = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "Datos"
+    )
+    RUTA_ARCHIVO = os.path.join(RUTA_DATOS, "aulas.json")
+
+    @staticmethod
     def cargarInstancias():
         from Clases.Aula import Aula
         from Clases.AulaPractica import AulaPractica
+
         aulas = GestorAula.cargarAulaJson()
-        #   limpia los diccionarios por si acaso
+
         GestorAula.aulas_teoricas.clear()
         GestorAula.aulas_practicas.clear()
-        #   va cargando las instancia de administrador creadas desde los json
+
         for id_str, datos in aulas.get("teorica", {}).items():
-            GestorAula.aulas_teoricas[int(id_str)] = Aula(datos["nombre"], datos["mesas"], datos["sillas"])
-        #   va cargando las instancias de coordinador creadas desde los json
+            GestorAula.aulas_teoricas[int(id_str)] = Aula(
+                datos["nombre"],
+                datos["mesas"],
+                datos["sillas"]
+            )
+
         for id_str, datos in aulas.get("practica", {}).items():
-            GestorAula.aulas_practicas[int(id_str)] = AulaPractica(datos["nombre"], datos["mesas"], datos["sillas"], datos["equipos"])
+            GestorAula.aulas_practicas[int(id_str)] = AulaPractica(
+                datos["nombre"],
+                datos["mesas"],
+                datos["sillas"],
+                datos["equipos"]
+            )
 
-    def guardarAulaJson(asignaturas):
-        with open("aulas.jsom","w") as f:
-            json.dump(asignaturas, f, indent = 4)
-
+    @staticmethod
     def cargarAulaJson():
-        with open("aulas.json", "r") as f:
-            return json.load(f)
+        try:
+            with open(GestorAula.RUTA_ARCHIVO, "r", encoding="utf-8") as archivo:
+                datos = json.load(archivo)
 
-    def asignarID(dato, comparador):
+            if not isinstance(datos, dict):
+                print("La estructura del archivo de aulas no es válida.")
+                return {"teorica": {}, "practica": {}}
+
+            datos.setdefault("teorica", {})
+            datos.setdefault("practica", {})
+            return datos
+
+        except FileNotFoundError:
+            return {"teorica": {}, "practica": {}}
+        except json.JSONDecodeError:
+            print("El archivo de aulas está vacío o contiene JSON inválido.")
+            return {"teorica": {}, "practica": {}}
+
+    @staticmethod
+    def guardarAulaJson(aulas):
+        try:
+            os.makedirs(GestorAula.RUTA_DATOS, exist_ok=True)
+
+            with open(GestorAula.RUTA_ARCHIVO, "w", encoding="utf-8") as archivo:
+                json.dump(aulas, archivo, indent=4, ensure_ascii=False)
+
+            print("Aulas guardadas correctamente.")
+            return True
+
+        except OSError as error:
+            print(f"Error al guardar las aulas: {error}")
+            return False
+
+    @staticmethod
+    def registrarAula(tipo, nombre, mesas, sillas, equipos=None):
+        tipo = tipo.strip().lower()
+        nombre = nombre.strip()
+
+        if tipo not in ("teorica", "practica"):
+            print("El tipo debe ser teórica o práctica.")
+            return False
+
+        if not nombre:
+            print("El nombre del aula es obligatorio.")
+            return False
+
+        if not isinstance(mesas, int) or mesas <= 0:
+            print("La cantidad de mesas debe ser un entero positivo.")
+            return False
+
+        if not isinstance(sillas, int) or sillas <= 0:
+            print("La cantidad de sillas debe ser un entero positivo.")
+            return False
+
+        if tipo == "practica":
+            if not isinstance(equipos, list) or not equipos:
+                print("Debe registrar al menos un equipo para el aula práctica.")
+                return False
+
         aulas = GestorAula.cargarAulaJson()
-        id_max=0
-        aulasT = aulas.get("teorica", {})
-        for aula in aulasT:
-            if int(aula) > id_max:
-                id_max = int(aula)
-            if aulasT[aula][comparador] == dato:
-                return False, None
-        aulasP = aulas.get("practica",{})
-        for aula in aulasP:
-            if int(aula) > id_max:
-                id_max = int(aula)
-            if aulasP[aula][comparador] == dato:
-                return False, None
-        return True, id_max+1
+
+        for categoria in ("teorica", "practica"):
+            for datos in aulas[categoria].values():
+                if datos["nombre"].strip().lower() == nombre.lower():
+                    print("Ya existe un aula registrada con ese nombre.")
+                    return False
+
+        id_maximo = 0
+
+        for categoria in ("teorica", "practica"):
+            for id_aula in aulas[categoria]:
+                if id_aula.isdigit():
+                    id_maximo = max(id_maximo, int(id_aula))
+
+        nueva_aula = {
+            "nombre": nombre,
+            "mesas": mesas,
+            "sillas": sillas
+        }
+
+        if tipo == "practica":
+            nueva_aula["equipos"] = equipos
+
+        aulas[tipo][str(id_maximo + 1)] = nueva_aula
+
+        if not GestorAula.guardarAulaJson(aulas):
+            return False
+
+        GestorAula.cargarInstancias()
+        print(f"Aula '{nombre}' registrada correctamente.")
+        return True
 
 class GestorEstructuraAcademica:
 

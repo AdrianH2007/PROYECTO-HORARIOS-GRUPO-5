@@ -3,7 +3,6 @@ import json
 
 class Aula:
     def __init__(self, nombre, cantidadMesas, cantidadSillas):
-        super().__init__
         self.nombre = nombre
         self.cantidadMesas = cantidadMesas
         self.cantidadSillas = cantidadSillas

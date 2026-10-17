@@ -68,13 +68,16 @@ class CoordinadorAcademico(Usuario.Usuario):
                 nombre = input("Nombre de la materia: ").strip()
 
             docente = input(f"Profesor asignado a {nombre}: ").strip()
-
             while not docente:
                 print("Debe ingresar el nombre del profesor.")
                 docente = input(f"Profesor asignado a {nombre}: ").strip()
+
+            horas_semanales = leer_entero(f"¿Cúantas horas semanales se imparte {nombre}: ")
+
             materias.append({
                 "nombre": nombre,
-                "docente": docente
+                "docente": docente,
+                "horasSemanales": horas_semanales
             })
         
         datos_nivel = {
