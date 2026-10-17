@@ -1,5 +1,7 @@
-from Persistencia import GestorHorario, GestorAula
-import Usuario
+import json
+import os
+from Persistencia import GestorHorario, GestorAula, GestorEstructuraAcademica
+from Clases import Usuario
 
 class CoordinadorAcademico(Usuario.Usuario):
     def __init__(self, usuario, contrasena):
@@ -25,6 +27,85 @@ class CoordinadorAcademico(Usuario.Usuario):
         print("Sesión cerrada correctamente.")
         return True
 
+    def registrarDatosAcademicos(self):
+        if not self.sesionActiva:
+            print("Debe iniciar sesión para registrar datos académicos.")
+            return False
+
+        def leer_entero(mensaje):
+            while True:
+                valor = input(mensaje).strip()
+
+                if valor.isdigit() and int(valor) > 0:
+                    return int(valor)
+                print("Ingrese un úmero mayor a cero.")
+
+        print("\n===== REGITRO ACADÉMICO =====")
+
+        carrera = input("Nombre de la carrera: ").strip()
+        if not carrera:
+            print("La carrera es obligatoria.")
+            return False
+
+        nivel= input("Nivel de la carrera (ej. 1, 2, 3): ").strip()
+        if not nivel:
+            print("El nivel es obligatorio.")
+            return False
+
+        estudiantes = leer_entero("Cantidad de estudiantes del nivel: ")
+        aulas= leer_entero("Cantidad de aulas disponibles para el nivel: ")
+        paralelos = leer_entero("Cantidad de paralelos de nivel: ")
+        cantidad_materias= leer_entero("Cantidad de materias del nivel: ")
+
+        materias=[]
+
+        for numero in range(1, cantidad_materias + 1):
+            print(f"\n----- Materia {numero} -----")
+
+            nombre = input("Nombre de la materia: ").strip()
+            while not nombre:
+                print("El nombre de la materia es obligatorio.")
+                nombre = input("Nombre de la materia: ").strip()
+
+            docente = input(f"Profesor asignado a {nombre}: ").strip()
+
+            while not docente:
+                print("Debe ingresar el nombre del profesor.")
+                docente = input(f"Profesor asignado a {nombre}: ").strip()
+            materias.append({
+                "nombre": nombre,
+                "docente": docente
+            })
+        
+        datos_nivel = {
+            "carrera": carrera,
+            "nivel": nivel,
+            "cantidadEstudiantes": estudiantes,
+            "cantidadAulas": aulas,
+            "cantidadParalelos": paralelos,
+            "cantidadMaterias": cantidad_materias,
+            "materias": materias
+        }
+
+        registros = GestorEstructuraAcademica.cargarDatos()
+        registros.append(datos_nivel)
+
+        if not GestorEstructuraAcademica.guardarDatos(registros):
+            return False
+
+        print("\nDatos académicos registrados correctamente.")
+        print(f"Carrera: {carrera}")
+        print(f"Nivel: {nivel}")
+        print(f"Estudiantes: {estudiantes}")
+        print(f"Aulas disponibles: {aulas}")
+        print(f"Paralelos: {paralelos}")
+        
+
+        print("\nMaterias y profesores asignados:")
+        for materia in materias:
+            print(f"- {materia['nombre']}: " f"{materia['docente']}")
+        return True
+        
     def ingresarDatos(self, datos):
         if not self.sesionActiva:
             print("Debe iniciar sesión para ingresar datos.")
