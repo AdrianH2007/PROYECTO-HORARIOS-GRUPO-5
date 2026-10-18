@@ -26,13 +26,13 @@ class GestorUsuario():
     @staticmethod
     def cargarCuentasJson():
         #   devuelve el json legible para python
-        with open("cuentasUsuario.json", "r") as f:
+        with open("Datos/cuentasUsuario.json", "r") as f:
             return json.load(f)
 
     @staticmethod
     def guardarCuentasJson(cuentas):
         #   transforma el diccionario de python al json
-        with open ("cuentasUsuario.json", "w") as f:
+        with open ("Datos/cuentasUsuario.json", "w") as f:
             json.dump(cuentas, f)
 
     @staticmethod
