@@ -16,9 +16,7 @@ class Aula:
     @staticmethod
     def consultarAula():
         nombre = input("Ingrese el nombre del aula:")
-        f = open("aulas,json", "r")
-        aulas = json.load(f)
-        f.close
+        aulas = Aula.Abrir_JSON_lectura()
         if nombre in aulas:
             print("Aula", nombre)
             for dato in aulas[nombre]:
@@ -29,9 +27,7 @@ class Aula:
     @staticmethod
     def asignarAula(gestorHorario, idHorario):
         nombre = input("Ingrese el nombre del aula ")
-        f = open("aulas.json", "r")
-        aulas = json.load(f)
-        f.close
+        aulas = Aula.Abrir_JSON_lectura()
         if nombre not in aulas:
             print("El aula que busca no existe")
             return
@@ -51,9 +47,7 @@ class Aula:
     @staticmethod
     def editarAula():
         nombre = input("Ingrese el nombre del aula que desea editar: ")
-        f = open("aulas.json", "r")
-        aulas = json.load(f)
-        f.close()
+        aulas = Aula.Abrir_JSON_lectura()
         if nombre not in aulas:
             print("El aula que busca no existe ")
             return
@@ -76,17 +70,13 @@ class Aula:
             case _:
                 print("No se ingreso una de las 3 respuestas")
                 return
-        f = open("aulas.json", "w")
-        json.dump(aulas, f, indent =4)
-        f.close()
+        Aula.Abrir_JSON_escritura(aulas)
         print("Se realizaon los cambios correctamente")
 
     @staticmethod
     def eliminarAula():
         nombre = input("Ingrese el nombre del aula que quiera eliminar: ")
-        f = open("aulas.json", "r")
-        aulas = json.load(f)
-        f.close()
+        aulas = Aula.Abrir_JSON_lectura()
         if nombre not in aulas:
             print("El aula que se busca no existe en el sistema")
             return
@@ -100,7 +90,16 @@ class Aula:
                         print("No se puede el aula porque esta en un horario")
                         return
         aulas.pop(nombre)
-        f = open("aulas.json", "w")
-        json.dump(aulas, f, indent=4)
-        f.close()
+        Aula.Abrir_JSON_escritura(aulas)
         print("Se a eliminado el aula")
+
+    @staticmethod
+    def Abrir_JSON_lectura():
+        with open("aulas.json", "r", encoding="utf-8") as archivo:
+            aulas = json.load(archivo)
+            return aulas
+
+    @staticmethod
+    def Abrir_JSON_escritura(aulas):
+        with open("aulas.json", "w", encoding="utf-8") as archivo:
+            json.dump(aulas, archivo, indent=4, ensure_ascii=False)
