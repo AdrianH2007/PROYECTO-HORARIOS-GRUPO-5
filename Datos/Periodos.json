@@ -1,0 +1,55 @@
+[
+    {
+        "Nombre": "2026 1",
+        "Tiempo de inicio": "20/04/2026",
+        "Tiempo de fin": "25/10/2026",
+        "Parciales": 1,
+        "Asignaturas": [
+            {
+                "Nombre": "Redes de Computadoras",
+                "Cantidad de Horas": 75,
+                "Cantidad de dias": 2,
+                "Dias que se imparte": [
+                    "Lunes",
+                    "Martes"
+                ],
+                "Cantidad de paralelos": 2,
+                "Paralelos": [
+                    "A",
+                    "B"
+                ]
+            },
+            {
+                "Nombre": "Catedra Alfaro",
+                "Cantidad de Horas": 50,
+                "Cantidad de dias": 1,
+                "Dias que se imparte": [
+                    "Viernes"
+                ],
+                "Cantidad de paralelos": 6,
+                "Paralelos": [
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                    "E",
+                    "F"
+                ]
+            },
+            {
+                "Nombre": "Estructura de Datos",
+                "Cantidad de Horas": 75,
+                "Cantidad de dias": 2,
+                "Dias que se imparte": [
+                    "Miercoles",
+                    "Jueves"
+                ],
+                "Cantidad de paralelos": 2,
+                "Paralelos": [
+                    "A",
+                    "B"
+                ]
+            }
+        ]
+    }
+]
