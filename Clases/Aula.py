@@ -1,3 +1,4 @@
+from Persistencia import GestorAula
 import json
 
 
@@ -17,12 +18,14 @@ class Aula:
     def consultarAula():
         nombre = input("Ingrese el nombre del aula:")
         aulas = Aula.Abrir_JSON_lectura()
-        if nombre in aulas:
-            print("Aula", nombre)
-            for dato in aulas[nombre]:
-                print(dato + ":", aulas [nombre][dato])
-        else:
-            print("El aula que busca no existe")
+        for tipo in ("teorica", "practica"):
+            for id_aula, datos in aulas.get(tipo, {}).items():
+                if datos.get("nombre") == nombre:
+                    print("Aula", nombre)
+                    for dato in datos:
+                        print(dato + ":", datos[dato])
+                    return
+        print("El aula que busca no existe")
 
     @staticmethod
     def asignarAula(gestorHorario, idHorario):
@@ -48,7 +51,14 @@ class Aula:
     def editarAula():
         nombre = input("Ingrese el nombre del aula que desea editar: ")
         aulas = Aula.Abrir_JSON_lectura()
-        if nombre not in aulas:
+        aula = None
+        tipo = None
+        for t in ("teorica", "practica"):
+            for id_aula, datos in aulas.get(t, {}).items():
+                if datos.get("nombre") == nombre:
+                    aula = datos
+                    tipo = t
+        if aula is None:
             print("El aula que busca no existe ")
             return
         print("Que desea editar")
@@ -58,12 +68,12 @@ class Aula:
         opcion = int(input())
         match opcion:
             case 1:
-                aulas[nombre]["mesas"] = int(input("Ingrese la nueva cantidad de mesas: "))
+                aula["mesas"] = int(input("Ingrese la nueva cantidad de mesas: "))
             case 2:
-                aulas[nombre]["sillas"] = int(input("Ingrese la nueva cantidad de sillas: "))
+                aula["sillas"] = int(input("Ingrese la nueva cantidad de sillas: "))
             case 3:
-                if aulas[nombre]["tipo"] == "AulaPractica":
-                    aulas[nombre]["equipos"] = int(input("Ingrese la nueva cantidad de equipos: "))
+                if tipo == "practica":
+                    aula["equipos"] = int(input("Ingrese la nueva cantidad de equipos: "))
                 else:
                     print("Esta aula no es un laboratorio")
                     return
@@ -77,29 +87,36 @@ class Aula:
     def eliminarAula():
         nombre = input("Ingrese el nombre del aula que quiera eliminar: ")
         aulas = Aula.Abrir_JSON_lectura()
-        if nombre not in aulas:
+        tipo = None
+        id_eliminar = None
+        for t in ("teorica", "practica"):
+            for id_aula, datos in aulas.get(t, {}).items():
+                if datos.get("nombre") == nombre:
+                    tipo = t
+                    id_eliminar = id_aula
+        if tipo is None:
             print("El aula que se busca no existe en el sistema")
             return
-        f = open("horarios.json", "r")
+        f = open("Datos/horarios.json", "r")
         horarios = json.load(f)
         f.close
         for coord in horarios:
             for dia in horarios[coord]["horarios"]:
                 for h in horarios[coord]["horarios"][dia]:
-                    if h["aulas"] == nombre:
+                    if h["aula"] == nombre:
                         print("No se puede el aula porque esta en un horario")
                         return
-        aulas.pop(nombre)
+        aulas[tipo].pop(id_eliminar)
         Aula.Abrir_JSON_escritura(aulas)
         print("Se a eliminado el aula")
 
     @staticmethod
     def Abrir_JSON_lectura():
-        with open("aulas.json", "r", encoding="utf-8") as archivo:
+        with open("Datos/aulas.json", "r", encoding="utf-8") as archivo:
             aulas = json.load(archivo)
             return aulas
 
     @staticmethod
     def Abrir_JSON_escritura(aulas):
-        with open("aulas.json", "w", encoding="utf-8") as archivo:
+        with open("Datos/aulas.json", "w", encoding="utf-8") as archivo:
             json.dump(aulas, archivo, indent=4, ensure_ascii=False)
