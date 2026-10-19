@@ -114,13 +114,13 @@ class CoordinadorAcademico(Usuario.Usuario):
                 print("Debe iniciar sesión para generar horarios.")
                 return False
 
-            # 1. Cargar la estructura académica registrada
+            # Carga la estructura académica registrada
             registros_academicos = GestorEstructuraAcademica.cargarDatos()
             if not registros_academicos:
                 print("No hay datos académicos registrados para generar el horario.")
                 return False
 
-            # 2. Cargar las aulas registradas
+            # Carga las aulas registradas
             aulas_disponibles = GestorAula.cargarAulaJson()
             aulas_lista = []
             for tipo in ["teorica", "practica"]:
@@ -134,7 +134,6 @@ class CoordinadorAcademico(Usuario.Usuario):
 
             dias_semana = GestorHorario.DIAS
 
-            # Bloques matutinos y vespertinos estrictos hasta las 7:00 PM (19:00)
             bloques_matutinos = [
                 {"inicio": "07:00", "fin": "09:00"},
                 {"inicio": "09:00", "fin": "11:00"},
@@ -147,11 +146,11 @@ class CoordinadorAcademico(Usuario.Usuario):
                 {"inicio": "17:00", "fin": "19:00"}
             ]
 
-            # Reiniciar los horarios actuales del gestor para hacer una generación limpia
+            # Reinicia los horarios actuales del gestor para hacer una generación limpia
             self.gestor.horarios = {dia: [] for dia in dias_semana}
 
             def obtener_nombre_paralelo(index):
-                return chr(65 + index)  # 0 -> 'A', 1 -> 'B', etc.
+                return chr(65 + index) 
 
             def hay_conflicto_silencioso(nuevo_h, dia_actual):
                 inicio1 = GestorHorario.convertirHora(nuevo_h["horaInicio"])
@@ -182,7 +181,6 @@ class CoordinadorAcademico(Usuario.Usuario):
                         return True
                 return False
 
-            # 3. Iterar sobre cada nivel y sus paralelos
             for registro in registros_academicos:
                 carrera = registro.get("carrera", "N/A")
                 nivel = registro.get("nivel", "N/A")
@@ -208,7 +206,7 @@ class CoordinadorAcademico(Usuario.Usuario):
 
                         sesiones_colocadas = 0
 
-                        # REGLA DE ORO: Intentar ubicar cada sesión en un DÍA DIFERENTE
+                        # Ubicar cada sesión en un día diferente
                         # Iteramos primero por los días de la semana de forma rotativa
                         intentos_dia = 0
                         while sesiones_colocadas < num_sesiones and intentos_dia < len(dias_semana) * 2:
@@ -283,7 +281,6 @@ class CoordinadorAcademico(Usuario.Usuario):
                                     if sesiones_colocadas >= num_sesiones:
                                         break
 
-            # 4. Guardar automáticamente en el JSON
             self.gestor.guardarHorarios()
             print("\n¡Horarios generados distribuyendo las materias en días diferentes sin repetir el mismo día!")
             return True
