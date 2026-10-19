@@ -1,4 +1,44 @@
 {
-    "teorica": {},
-    "practica": {}
+    "teorica": {
+        "1": {
+            "nombre": "207",
+            "mesas": 45,
+            "sillas": 23,
+            "estado": "Valida"
+        },
+        "3": {
+            "nombre": "203",
+            "mesas": 32,
+            "sillas": 40,
+            "estado": "Valida"
+        },
+        "5": {
+            "nombre": "204",
+            "mesas": 30,
+            "sillas": 30,
+            "estado": "Valida"
+        },
+        "6": {
+            "nombre": "102",
+            "mesas": 35,
+            "sillas": 35,
+            "estado": "Valida"
+        }
+    },
+    "practica": {
+        "2": {
+            "nombre": "101",
+            "mesas": 30,
+            "sillas": 32,
+            "equipos": 16,
+            "estado": "Valida"
+        },
+        "4": {
+            "nombre": "206",
+            "mesas": 40,
+            "sillas": 46,
+            "equipos": 18,
+            "estado": "Valida"
+        }
+    }
 }

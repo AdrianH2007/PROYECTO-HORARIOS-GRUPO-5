@@ -109,75 +109,184 @@ class CoordinadorAcademico(Usuario.Usuario):
             print(f"- {materia['nombre']}: " f"{materia['docente']}")
         return True
         
-    def ingresarDatos(self, datos):
-        if not self.sesionActiva:
-            print("Debe iniciar sesión para ingresar datos.")
-            return False
-
-        CAMPOS = ["carrera", "asignatura", "docente", "aula", "semestre", "paralelo", "dia", "horaInicio", "horaFin"]
-        for campo in CAMPOS:
-            if campo not in datos or not str(datos[campo]).strip():
-                print(f"El campo '{campo}' es obligatorio.")
+    def generarHorarios(self):
+            if not self.sesionActiva:
+                print("Debe iniciar sesión para generar horarios.")
                 return False
 
-        dia = datos["dia"].strip()
-        if dia not in GestorHorario.DIAS:
-            print(f"El día '{dia}' no es válido. Debe ser uno de: {GestorHorario.DIAS}")
-            return False
+            # 1. Cargar la estructura académica registrada
+            registros_academicos = GestorEstructuraAcademica.cargarDatos()
+            if not registros_academicos:
+                print("No hay datos académicos registrados para generar el horario.")
+                return False
 
-        inicio = GestorHorario.convertirHora(datos["horaInicio"])
-        fin = GestorHorario.convertirHora(datos["horaFin"])
+            # 2. Cargar las aulas registradas
+            aulas_disponibles = GestorAula.cargarAulaJson()
+            aulas_lista = []
+            for tipo in ["teorica", "practica"]:
+                if tipo in aulas_disponibles and isinstance(aulas_disponibles[tipo], dict):
+                    for aula_id, info in aulas_disponibles[tipo].items():
+                        aulas_lista.append(info.get("nombre", f"Aula {aula_id}"))
 
-        if inicio == -1 or fin == -1 or inicio >= fin:
-            if inicio >= fin:
-                print("La hora de inicio debe ser menor que la hora de fin.")
-            return False
+            if not aulas_lista:
+                print("No hay aulas registradas en el sistema.")
+                return False
 
-        horario = {
-            "id": str(self.gestor.contadorID),
-            "carrera": datos["carrera"].strip(),
-            "asignatura": datos["asignatura"].strip(),
-            "docente": datos["docente"].strip(),
-            "aula": datos["aula"].strip(),
-            "semestre": datos["semestre"].strip(),
-            "paralelo": datos["paralelo"].strip(),
-            "horaInicio": datos["horaInicio"],
-            "horaFin": datos["horaFin"],
-            "estado": "pendiente"
-        }
+            dias_semana = GestorHorario.DIAS
 
-        if self.gestor._verificarCruce(horario, dia):
-            return False
+            # Bloques matutinos y vespertinos estrictos hasta las 7:00 PM (19:00)
+            bloques_matutinos = [
+                {"inicio": "07:00", "fin": "09:00"},
+                {"inicio": "09:00", "fin": "11:00"},
+                {"inicio": "11:00", "fin": "13:00"}
+            ]
 
-        self.gestor.horarios[dia].append(horario)
-        self.gestor.contadorID += 1
-        self.gestor.guardarHorarios()
+            bloques_vespertinos = [
+                {"inicio": "13:00", "fin": "15:00"},
+                {"inicio": "15:00", "fin": "17:00"},
+                {"inicio": "17:00", "fin": "19:00"}
+            ]
 
-        print(f"Horario registrado correctamente para el día {dia}.")
-        return horario
+            # Reiniciar los horarios actuales del gestor para hacer una generación limpia
+            self.gestor.horarios = {dia: [] for dia in dias_semana}
 
-    def generarHorarios(self):
-        if not self.sesionActiva:
-            print("Debe iniciar sesión para generar horarios.")
-            return False
+            def obtener_nombre_paralelo(index):
+                return chr(65 + index)  # 0 -> 'A', 1 -> 'B', etc.
 
-        if not any(self.gestor.horarios.values()):
-            print("No hay horarios registrados.")
-            return False
+            def hay_conflicto_silencioso(nuevo_h, dia_actual):
+                inicio1 = GestorHorario.convertirHora(nuevo_h["horaInicio"])
+                fin1 = GestorHorario.convertirHora(nuevo_h["horaFin"])
+                
+                for otro in self.gestor.horarios.get(dia_actual, []):
+                    inicio2 = GestorHorario.convertirHora(otro["horaInicio"])
+                    fin2 = GestorHorario.convertirHora(otro["horaFin"])
 
-        for dia, lista in self.gestor.horarios.items():
-            for h in lista:
-                if self.gestor._verificarCruce(h, dia, idExcluir=h["id"]):
-                    print(f"Error de cruce en el día {dia} (ID {h['id']}).")
-                    return False
+                    if inicio1 < fin2 and inicio2 < fin1:
+                        if nuevo_h["docente"] == otro["docente"]:
+                            return True
+                        if nuevo_h["aula"] == otro["aula"]:
+                            return True
+                        if (str(nuevo_h.get("carrera")) == str(otro.get("carrera")) and 
+                            str(nuevo_h.get("nivel")) == str(otro.get("nivel")) and 
+                            str(nuevo_h.get("paralelo")) == str(otro.get("paralelo"))):
+                            return True
+                return False
 
-        for dia, lista in self.gestor.horarios.items():
-            for h in lista:
-                h["estado"] = "generado"
+            # Función para verificar si un paralelo ya tiene esa misma materia o está ocupado ese día
+            def paralelo_ya_tiene_materia_en_dia(carrera, nivel, paralelo, materia_nombre, dia):
+                for h in self.gestor.horarios.get(dia, []):
+                    if (str(h.get("carrera")) == str(carrera) and 
+                        str(h.get("nivel")) == str(nivel) and 
+                        str(h.get("paralelo")) == str(paralelo) and 
+                        h.get("materia") == materia_nombre):
+                        return True
+                return False
 
-        self.gestor.guardarHorarios()
-        print("Los horarios semanales se generaron correctamente.")
-        return True
+            # 3. Iterar sobre cada nivel y sus paralelos
+            for registro in registros_academicos:
+                carrera = registro.get("carrera", "N/A")
+                nivel = registro.get("nivel", "N/A")
+                num_paralelos = int(registro.get("cantidadParalelos", 1))
+                materias = registro.get("materias", [])
+
+                for p in range(num_paralelos):
+                    paralelo_nombre = obtener_nombre_paralelo(p)
+
+                    # Asignación estricta de Jornada por Paralelo
+                    if p % 2 == 0:
+                        bloques_horarios = bloques_matutinos
+                        jornada_txt = "Matutina"
+                    else:
+                        bloques_horarios = bloques_vespertinos
+                        jornada_txt = "Vespertina"
+
+                    for materia in materias:
+                        nombre_materia = materia["nombre"]
+                        docente = materia["docente"]
+                        horas_totales = materia.get("horasSemanales", 4)
+                        num_sesiones = max(1, horas_totales // 2)
+
+                        sesiones_colocadas = 0
+
+                        # REGLA DE ORO: Intentar ubicar cada sesión en un DÍA DIFERENTE
+                        # Iteramos primero por los días de la semana de forma rotativa
+                        intentos_dia = 0
+                        while sesiones_colocadas < num_sesiones and intentos_dia < len(dias_semana) * 2:
+                            dia_idx = (hash(nombre_materia) + p + sesiones_colocadas + intentos_dia) % len(dias_semana)
+                            dia_actual = dias_semana[dia_idx]
+                            intentos_dia += 1
+
+                            # RESTRICCIÓN: Evitar que el paralelo vea la misma materia dos veces el mismo día
+                            if paralelo_ya_tiene_materia_en_dia(carrera, nivel, paralelo_nombre, nombre_materia, dia_actual):
+                                continue
+
+                            # Buscar un bloque libre en ese día
+                            espacio_asignado_en_dia = False
+                            for bloque in bloques_horarios:
+                                if espacio_asignado_en_dia:
+                                    break
+
+                                for intento_aula in range(len(aulas_lista)):
+                                    aula_actual = aulas_lista[(self.gestor.contadorID + intento_aula) % len(aulas_lista)]
+
+                                    nuevo_horario = {
+                                        "id": str(self.gestor.contadorID),
+                                        "carrera": carrera,
+                                        "semestre": nivel,
+                                        "nivel": nivel,
+                                        "paralelo": paralelo_nombre,
+                                        "materia": nombre_materia,
+                                        "docente": docente,
+                                        "aula": aula_actual,
+                                        "horaInicio": bloque["inicio"],
+                                        "horaFin": bloque["fin"],
+                                        "estado": "generado"
+                                    }
+
+                                    if not hay_conflicto_silencioso(nuevo_horario, dia_actual):
+                                        self.gestor.horarios[dia_actual].append(nuevo_horario)
+                                        self.gestor.contadorID += 1
+                                        sesiones_colocadas += 1
+                                        espacio_asignado_en_dia = True
+                                        break
+                                
+                                if espacio_asignado_en_dia:
+                                    break
+
+                        # Si por falta de días libres quedan sesiones pendientes, las ubicamos permitiendo otro bloque
+                        if sesiones_colocadas < num_sesiones:
+                            for dia_actual in dias_semana:
+                                if sesiones_colocadas >= num_sesiones:
+                                    break
+                                for bloque in bloques_horarios:
+                                    if sesiones_colocadas >= num_sesiones:
+                                        break
+                                    for aula_info in aulas_lista:
+                                        nuevo_horario = {
+                                            "id": str(self.gestor.contadorID),
+                                            "carrera": carrera,
+                                            "semestre": nivel,
+                                            "nivel": nivel,
+                                            "paralelo": paralelo_nombre,
+                                            "materia": nombre_materia,
+                                            "docente": docente,
+                                            "aula": aula_info,
+                                            "horaInicio": bloque["inicio"],
+                                            "horaFin": bloque["fin"],
+                                            "estado": "generado"
+                                        }
+                                        if not hay_conflicto_silencioso(nuevo_horario, dia_actual):
+                                            self.gestor.horarios[dia_actual].append(nuevo_horario)
+                                            self.gestor.contadorID += 1
+                                            sesiones_colocadas += 1
+                                            break
+                                    if sesiones_colocadas >= num_sesiones:
+                                        break
+
+            # 4. Guardar automáticamente en el JSON
+            self.gestor.guardarHorarios()
+            print("\n¡Horarios generados distribuyendo las materias en días diferentes sin repetir el mismo día!")
+            return True
 
     def modificarHorario(self, idHorario, cambios):
         if not self.sesionActiva:

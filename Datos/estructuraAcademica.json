@@ -1,0 +1,37 @@
+[
+    {
+        "carrera": "Software",
+        "nivel": "1",
+        "cantidadEstudiantes": 80,
+        "cantidadAulas": 6,
+        "cantidadParalelos": 3,
+        "cantidadMaterias": 5,
+        "materias": [
+            {
+                "nombre": "Matematicas",
+                "docente": "Luigi",
+                "horasSemanales": 5
+            },
+            {
+                "nombre": "Arquitectura del computador",
+                "docente": "Samanta",
+                "horasSemanales": 4
+            },
+            {
+                "nombre": "Catedra",
+                "docente": "Esther",
+                "horasSemanales": 5
+            },
+            {
+                "nombre": "Programación",
+                "docente": "Junior",
+                "horasSemanales": 6
+            },
+            {
+                "nombre": "Fundamentos",
+                "docente": "Jose",
+                "horasSemanales": 4
+            }
+        ]
+    }
+]
